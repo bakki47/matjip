@@ -1,3 +1,4 @@
+import {parseInbox, mergeRecord} from './inbox-import.mjs';
 const settings = window.FIREBASE_SETTINGS;
 const report = message => {
   window.firebaseSetupError = message;
@@ -34,6 +35,19 @@ if (!settings?.firebaseConfig?.apiKey || !settings.firebaseConfig.projectId || !
         })
       },
       user: {id: async () => visitorId, profiles: async () => ({})},
+      importInbox: async (input, catalog, progress = () => {}) => {
+        const records = parseInbox(input, catalog);
+        let completed = 0;
+        for (const record of records) {
+          await storeSDK.runTransaction(store, async transaction => {
+            const ref = storeSDK.doc(collectionRef(record.collection), record.id);
+            const snapshot = await transaction.get(ref);
+            transaction.set(ref, mergeRecord(snapshot.exists() ? snapshot.data() : null, record.data));
+          });
+          progress(++completed, records.length);
+        }
+        return completed;
+      },
       importMissing: (name, id, data) => storeSDK.runTransaction(store, async transaction => {
         const ref = storeSDK.doc(collectionRef(name), id);
         const existing = await transaction.get(ref);

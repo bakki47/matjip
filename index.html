@@ -222,7 +222,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   </header>
   <div>
     <div class="bar"><i id="bar"></i></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="firebase-import" type="button" disabled>기존 기기 기록 가져오기</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="firebase-import" type="button" disabled>기존 기기 기록 가져오기</button><button class="btn" id="inbox-upload" type="button" disabled>JSON 파일 가져오기</button><input id="inbox-file" type="file" accept=".json,application/json" hidden></div>
+    <p id="inbox-status" class="sub" role="status" hidden></p>
     <div class="status"><span id="left"></span><span id="sync">같이 쓰는 기록에 연결하는 중…</span></div>
   </div>
 
@@ -832,6 +833,7 @@ async function connect(){
     LOGCOL=db.collection("mylog");
     LOGCOL.onSnapshot({next:qs=>{onLog(qs);setSync(true);},error:()=>setSync(false,"기록 연결 실패 · Firebase 접근 권한을 확인해 주세요")});
     document.getElementById("firebase-import").disabled=false;
+    document.getElementById("inbox-upload").disabled=false;
   }catch(e){live=false;setSync(false);}
 }
 window.addEventListener("firebase-ready",()=>connect());
@@ -848,13 +850,35 @@ document.getElementById("firebase-import").onclick=async()=>{
   }catch(e){setSync(false,"가져오기 실패 · 다시 시도해 주세요");}
   finally{button.disabled=false;}
 };
+const inboxUpload=document.getElementById("inbox-upload"), inboxFile=document.getElementById("inbox-file"), inboxStatus=document.getElementById("inbox-status");
+inboxUpload.onclick=()=>inboxFile.click();
+inboxFile.onchange=async()=>{
+  const file=inboxFile.files[0]; if(!file) return;
+  inboxUpload.disabled=true; inboxStatus.hidden=false;
+  let completed=0;
+  try{
+    if(file.size>2*1024*1024) throw new Error("JSON 파일은 2MB 이하로 선택해 주세요");
+    inboxStatus.textContent="파일을 확인하는 중…";
+    const input=JSON.parse((await file.text()).replace(/^\uFEFF/,""));
+    const catalog=Object.fromEntries(Object.entries(PAGES).map(([k,v])=>[k,v.shops.map(shop=>shop.id)]));
+    const count=await window.firebaseStore.importInbox(input,catalog,(done,total)=>{
+      completed=done; inboxStatus.textContent=`Firestore에 저장 중… ${done}/${total}곳`;
+    });
+    inboxStatus.textContent=`${count}곳 가져오기 완료 · Firestore에 저장했어요. 같은 방문은 중복 추가하지 않아요.`;
+  }catch(e){
+    const permissionDenied=e.code==="permission-denied"||/insufficient permissions/i.test(e.message||"");
+    inboxStatus.textContent=permissionDenied
+      ? `가져오기 실패 · ${completed}곳 저장됨. Firestore 접근이 거부됐어요. Firebase 콘솔의 ${window.FIREBASE_SETTINGS?.firebaseConfig?.projectId} 프로젝트 → Firestore Database → (default) → Rules에서 최신 firestore.rules를 게시해 주세요. 저장 경로: workspaces/${window.FIREBASE_SETTINGS?.workspaceId}.`
+      : `가져오기 실패 · ${completed}곳 저장됨. ${e instanceof SyntaxError?"올바른 JSON 파일을 선택해 주세요":e.message}. 연결을 확인한 뒤 재시도해 주세요.`;
+  }finally{inboxUpload.disabled=false;inboxFile.value="";}
+};
 /* who stamped: "나" for me, the partner's account name otherwise */
 async function fillNames(box){
   const el=$(box); if(!el||!USER) return;
   const spans=[...el.querySelectorAll(".who[data-u]")]; if(!spans.length) return;
-  const ids=[...new Set(spans.map(x=>x.dataset.u).filter(u=>u&&u!==ME))];
+  const ids=[...new Set(spans.map(x=>x.dataset.u).filter(u=>u&&u!==ME&&!u.startsWith("name:")))];
   let ps={}; try{ if(ids.length) ps=await USER.profiles(ids); }catch(e){}
-  spans.forEach(x=>{ const u=x.dataset.u; x.textContent=u===ME?"나":((ps[u]&&ps[u].name)||"짝꿍"); });
+  spans.forEach(x=>{ const u=x.dataset.u; x.textContent=u===ME?"나":u.startsWith("name:")?u.slice(5):((ps[u]&&ps[u].name)||"짝꿍"); });
 }
 document.querySelectorAll(".vbtn").forEach(b=>b.onclick=()=>setView(b.dataset.v));
 (()=>{const inp=$("#q"), clr=$("#qclear"); let t=null;

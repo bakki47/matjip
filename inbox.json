@@ -1,0 +1,127 @@
+{
+  "format": "gomjji-matjip-inbox",
+  "version": 1,
+  "exportedAt": "2026-11-05T22:20:00+09:00",
+  "note": "앱이 열릴 때 Firebase로 옮기고 비우는 전달함. 공개 저장소에 두면 누구나 볼 수 있어요.",
+  "stamps": [
+    {
+      "page": "jjamppong",
+      "shopId": "bobae-cd",
+      "shopName": "보배반점 첨단점",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "page": "jjamppong",
+      "shopId": "chilbong",
+      "shopName": "칠봉이짬뽕",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "page": "jjamppong",
+      "shopId": "chinagung",
+      "shopName": "차이나궁",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "불타는 짬뽕 매운맛 굳",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "page": "jjamppong",
+      "shopId": "jingogae",
+      "shopName": "진고개반점",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "page": "jjamppong",
+      "shopId": "pyeonghwa-bj",
+      "shopName": "평화반점",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "짬뽕 굳, 탕수육 고기 크기 굳!",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "page": "jjamppong",
+      "shopId": "soya",
+      "shopName": "소야짬뽕전문점",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "고추짬뽕 굳!, 국물은 짜지만 면에 간이 완벽",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "page": "donkatsu",
+      "shopId": "ginza-sw",
+      "shopName": "긴자료코 광주수완점",
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "",
+          "by": "곰찌"
+        }
+      ]
+    }
+  ],
+  "log": [
+    {
+      "id": "m_chunggwang",
+      "name": "춘광식당",
+      "category": "장어",
+      "location": "목포 삼학로",
+      "star": 0,
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "생삼겹양념구이 존맛",
+          "by": "곰찌"
+        },
+        {
+          "date": "2026-11-05",
+          "memo": "",
+          "by": "곰찌"
+        }
+      ]
+    },
+    {
+      "id": "m_ieum",
+      "name": "이음칼국수",
+      "category": "면",
+      "location": "광주 신가동 (신가삼효로 31)",
+      "star": 0,
+      "visits": [
+        {
+          "date": "2026-11-05",
+          "memo": "칼국수 파전 맛탱",
+          "by": "곰찌"
+        }
+      ]
+    }
+  ]
+}
