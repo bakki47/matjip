@@ -86,6 +86,14 @@ svg{width:100%;height:auto;display:block}
 .tip{margin:6px 0 10px;font-size:14px}
 .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .btn{font:700 13px var(--body);border-radius:8px;padding:7px 12px;border:1.5px solid var(--chili);background:transparent;color:var(--chili);cursor:pointer}
+.record-tools{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.tool-icon{position:relative;width:36px;height:36px;padding:0;border:1.5px solid var(--chili);border-radius:50%;background:transparent;color:var(--chili);cursor:pointer;display:grid;place-items:center;font-size:18px;transition:background .15s,transform .15s}
+.tool-icon:not(:disabled):hover{transform:translateY(-1px)}
+.tool-icon:focus-visible{outline:2px solid var(--broth);outline-offset:3px}
+.tool-icon:disabled{opacity:.5;cursor:wait}
+.tool-tip{position:absolute;right:0;top:calc(100% + 8px);z-index:3;white-space:nowrap;padding:5px 9px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font:500 11px var(--body);box-shadow:0 3px 10px #0000000a;opacity:0;visibility:hidden;pointer-events:none}
+.tool-icon:hover .tool-tip,.tool-icon:focus-visible .tool-tip{opacity:1;visibility:visible}
+@media(prefers-reduced-motion:reduce){.tool-icon{transition:none}.tool-icon:not(:disabled):hover{transform:none}}
 .card.on .btn.stamp{background:var(--chili);color:var(--paper)}
 .links a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:5px 8px}
 .links a:hover{color:var(--ink)}
@@ -222,7 +230,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   </header>
   <div>
     <div class="bar"><i id="bar"></i></div>
-    <div class="row" style="margin-top:12px"><button class="btn" id="firebase-import" type="button" disabled>기존 기기 기록 가져오기</button><button class="btn" id="inbox-upload" type="button" disabled>JSON 파일 가져오기</button><input id="inbox-file" type="file" accept=".json,application/json" hidden></div>
+    <div class="record-tools" role="group" aria-label="기록 가져오기">
+      <button class="tool-icon" id="firebase-import" type="button" aria-label="기존 기기 기록 가져오기" title="기존 기기 기록 가져오기" disabled><span aria-hidden="true">📱</span><span class="tool-tip">기기 기록 가져오기</span></button>
+      <button class="tool-icon" id="inbox-upload" type="button" aria-label="JSON 파일 가져오기" title="JSON 파일 가져오기" disabled><span aria-hidden="true">📥</span><span class="tool-tip">JSON 파일 가져오기</span></button>
+    </div><input id="inbox-file" type="file" accept=".json,application/json" hidden>
     <p id="inbox-status" class="sub" role="status" hidden></p>
     <div class="status"><span id="left"></span><span id="sync">같이 쓰는 기록에 연결하는 중…</span></div>
   </div>
