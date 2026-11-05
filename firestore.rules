@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public shared notebook: no login required.
+    match /workspaces/our-food-log/{collectionName}/{recordId} {
+      allow read, write: if collectionName in [
+        'stamps-jjamppong', 'stamps-gukbap', 'stamps-donkatsu', 'mylog'
+      ];
+    }
+  }
+}
