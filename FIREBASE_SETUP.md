@@ -1,14 +1,26 @@
-# Firebase 연결 마무리 (로그인 없음)
+# Firebase 연결 (둘만 로그인해서 쓰기)
 
-firebase-config.js의 프로젝트 설정을 사용합니다. Authentication과 members 등록은 필요하지 않습니다.
+곰찌와 남자친구 두 계정만 기록을 읽고 쓸 수 있습니다. 다른 사람은 사이트 주소나 저장소를 알아도 기록을 볼 수 없습니다.
 
-1. Firebase 콘솔 → Firestore Database → Rules에서 이 저장소의 `firestore.rules` 전체 내용을 붙여 넣고 게시합니다. 이전 members 기반 규칙을 새 규칙으로 교체해야 합니다.
-2. `index.html`, `firebase-config.js`, `firebase-client.js`를 같은 폴더에 배포합니다. 로컬에서는 `python3 -m http.server 8000` 실행 후 http://localhost:8000 으로 접속합니다.
-3. 사이트를 새로고침합니다. 연결되면 '둘이 같이 쓰는 기록 · 실시간 반영돼요'가 표시됩니다.
-4. 기존 기록이 있는 브라우저에서 '기존 기기 기록 가져오기'를 누릅니다. 클라우드에 같은 ID가 있으면 기존 클라우드 값을 유지합니다.
-5. 도장을 찍거나 내 기록에 가게를 추가합니다. 다른 브라우저에서 반영되는지 확인합니다. 수정과 삭제도 공유됩니다.
+## 처음 한 번 설정하기
 
-Firestore 문서는 첫 저장 시 자동 생성됩니다. workspaces 문서나 members 배열을 직접 만들 필요가 없습니다. 기존 members 문서가 남아 있어도 사용하지 않습니다.
+**순서가 중요합니다.** 새 코드를 먼저 올리고 두 사람이 로그인한 다음에 규칙을 바꿔야 기록이 끊기지 않습니다.
+
+1. Firebase 콘솔 → Authentication → 시작하기 → Sign-in method → **이메일/비밀번호** 사용 설정
+2. Authentication → Users → **사용자 추가**로 두 계정을 만들고 각자의 **사용자 UID**를 복사합니다. 이메일 칸에는 `아이디@matjip.example.com` 형식으로 적습니다(예: `gomjji@matjip.example.com`). 로그인 화면에서는 `gomjji`처럼 아이디만 입력하면 됩니다. `example.com`은 예약된 주소라서 메일이 가지 않습니다.
+3. `firebase-config.js`의 `members`와 `firestore.rules`에 두 UID를 넣습니다. (2026-11-09 등록 완료)
+4. `firebase-config.js`, `firebase-client.js`, `firestore.rules`, 이 설명서를 저장소에 올립니다.
+5. 사이트를 열어 두 사람 모두 로그인합니다. 아이폰 홈 화면 앱은 사파리와 로그인이 따로라서 앱에서도 한 번 로그인합니다.
+6. Firebase 콘솔 → Firestore Database → Rules에 `firestore.rules` 내용을 붙여 넣고 **게시**합니다. 이때부터 두 사람만 기록을 볼 수 있습니다.
+7. (권장) Authentication → 설정 → 사용자 작업에서 **가입(계정 만들기) 허용**을 끕니다.
+
+UID와 Firebase 웹 설정값(apiKey 등)은 비밀번호가 아니어서 공개 저장소에 있어도 됩니다. 보호는 Firebase 서버의 Firestore 규칙이 합니다. 저장소의 `firestore.rules`는 사본이며, 실제 규칙은 콘솔에서 게시해야 적용됩니다. **비밀번호는 저장소나 채팅에 적지 마세요.**
+
+## 사용하기
+
+- 로그인 화면에서 아이디와 비밀번호를 입력합니다. 한 번 로그인한 기기는 로그아웃하기 전까지 유지됩니다.
+- 기록 도구의 🚪 버튼을 두 번 누르면 로그아웃합니다.
+- 비밀번호를 잊으면 Firebase 콘솔 → Authentication → Users에서 비밀번호를 다시 설정합니다.
 
 ## 데이터 경로
 
@@ -17,11 +29,7 @@ Firestore 문서는 첫 저장 시 자동 생성됩니다. workspaces 문서나 
 - workspaces/our-food-log/stamps-donkatsu/{가게ID}
 - workspaces/our-food-log/mylog/{기록ID}
 
-이 설정은 위 네 컬렉션을 공개합니다. 누구나 인증 없이 해당 기록을 조회·추가·수정·삭제할 수 있습니다. 다른 경로는 기본 거부됩니다. workspaceId를 바꾸면 규칙의 our-food-log도 함께 바꿔야 합니다.
-
-연결 전 기록은 기기에 저장됩니다. 기존 기록 사본은 localStorage의 firebase-migration-backup-v1에 보관합니다. 로그인 기능과 Google 인증 SDK는 제거했습니다. 기기 식별자는 작성자 표시에만 사용합니다.
-
-실제 서버의 규칙 게시와 브라우저 저장 검증은 별도로 진행해야 합니다.
+workspaceId를 바꾸면 규칙의 our-food-log도 함께 바꿔야 합니다. 연결 전 기록 사본은 localStorage의 firebase-migration-backup-v1에 보관합니다.
 
 ## inbox.json 업로드
 
@@ -31,4 +39,4 @@ Firestore 문서는 첫 저장 시 자동 생성됩니다. workspaces 문서나 
 
 진행률과 성공·실패 결과가 버튼 아래 표시됩니다. 여러 문서를 한 번에 저장하는 작업 전체가 원자적이지는 않으며, 도중 실패하면 일부는 저장될 수 있습니다. 실패 메시지의 저장 건수를 확인하고 같은 파일로 재시도할 수 있습니다. 가져오기는 온라인 연결이 필요합니다. 원본 JSON 파일을 서버에 보관하거나 자동으로 비우지는 않습니다. Firestore에는 변환된 기록만 저장합니다.
 
-별도 Rules 변경은 필요 없습니다. 예시 파일의 note에 있는 자동 이동·비우기 설명은 현재 동작이 아니며, 파일 선택 시에만 가져옵니다.
+로그인한 상태에서만 가져올 수 있습니다. 예시 파일의 note에 있는 자동 이동·비우기 설명은 현재 동작이 아니며, 파일 선택 시에만 가져옵니다.

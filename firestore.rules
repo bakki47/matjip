@@ -1,11 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public shared notebook: no login required.
+    // 로그인한 두 사람(곰찌, 남자친구)만 읽고 쓸 수 있어요.
+    // b7Xd… = 남자친구, sC0w… = 곰찌 (Firebase 콘솔 → Authentication → Users의 사용자 UID)
     match /workspaces/our-food-log/{collectionName}/{recordId} {
-      allow read, write: if collectionName in [
-        'stamps-jjamppong', 'stamps-gukbap', 'stamps-donkatsu', 'mylog'
-      ];
+      allow read, write: if request.auth != null
+        && request.auth.uid in ['b7XdVz41I9V6fz1ssb6jseRhecJ3', 'sC0wuqeQOGMVOucdMvOacEDvASE3']
+        && collectionName in ['stamps-jjamppong', 'stamps-gukbap', 'stamps-donkatsu', 'mylog'];
     }
   }
 }

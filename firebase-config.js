@@ -9,7 +9,14 @@ const firebaseConfig = {
     measurementId: "G-V75ZECZJFN"
   };
 
+// 로그인한 계정의 UID → 화면에 표시할 이름 (Firebase 콘솔 → Authentication → Users의 "사용자 UID")
+const members = {
+  "b7XdVz41I9V6fz1ssb6jseRhecJ3": "남자친구",
+  "sC0wuqeQOGMVOucdMvOacEDvASE3": "곰찌"
+};
+
 window.FIREBASE_SETTINGS = {
   firebaseConfig,
-  workspaceId: "our-food-log"
+  workspaceId: "our-food-log",
+  members
 };
